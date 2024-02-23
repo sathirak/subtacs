@@ -1,125 +1,99 @@
-#include <yaml.h>
+#include <windows.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include "../lib/cJSON.h"
 
-#define MAX_URLS 10
+#include "../main.h"
 
-struct Cargo {
-    char title[31];
-    char type[20];
-    char source[256];
-    char *content;
-    char urls[MAX_URLS][256];
-    int num_urls;
-    char emails[MAX_URLS][256];
-    int num_emails;
-};
 
-struct Cargo CargoClip;
+char* calc_filename(const char* folder_path) {
+    DIR *dir;
+    struct dirent *entry;
+    int file_count = 0;
+    
+    // Open the directory
+    dir = opendir(folder_path);
+    if (dir == NULL) {
+        perror("Unable to open directory");
+        return NULL;
+    }
 
-void write_cargo_to_yaml(const char *filename, const struct Cargo *cargo) {
-    FILE *file = fopen(filename, "w");
-    if (!file) {
-        perror("Error opening file");
+    // Count the files in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Check if the entry is a regular file
+        struct stat statbuf;
+        char full_path[PATH_MAX];
+        snprintf(full_path, sizeof(full_path), "%s/%s", folder_path, entry->d_name);
+        if (stat(full_path, &statbuf) == 0 && S_ISREG(statbuf.st_mode)) {
+            file_count++;
+        }
+    }
+
+    // Close the directory
+    closedir(dir);
+
+    // Convert the count to hexadecimal string
+    char* hex_count = (char*)malloc(sizeof(char) * 9); // Assuming 32-bit integer
+    if (hex_count == NULL) {
+        perror("Memory allocation failed");
+        return NULL;
+    }
+    sprintf(hex_count, "%X", file_count);
+
+    return hex_count;
+}
+
+void cargo_to_json(struct Cargo *cargo) {
+    cJSON *root = cJSON_CreateObject(); // Create a JSON object
+
+    // Add string fields
+    cJSON_AddStringToObject(root, "title", cargo->title);
+    cJSON_AddStringToObject(root, "type", cargo->type);
+    cJSON_AddStringToObject(root, "source", cargo->source);
+    cJSON_AddStringToObject(root, "content", cargo->content);
+
+    // Add arrays
+    cJSON *urlsArray = cJSON_AddArrayToObject(root, "urls");
+    for (int i = 0; i < cargo->num_urls; ++i) {
+        cJSON_AddItemToArray(urlsArray, cJSON_CreateString(cargo->urls[i]));
+    }
+
+    cJSON *emailsArray = cJSON_AddArrayToObject(root, "emails");
+    for (int i = 0; i < cargo->num_emails; ++i) {
+        cJSON_AddItemToArray(emailsArray, cJSON_CreateString(cargo->emails[i]));
+    }
+
+    // Print JSON to string
+    char *jsonString = cJSON_Print(root);
+
+    // Calculate filename
+    char filename[PATH_MAX];
+    char* filehex = calc_filename("./data");
+    if (filehex == NULL) {
+        fprintf(stderr, "Error calculating filename.\n");
+        cJSON_Delete(root);
+        free(jsonString);
         return;
     }
+    sprintf(filename, "./data/%s.json", filehex);
+    free(filehex);
 
-    yaml_emitter_t emitter;
-    yaml_emitter_initialize(&emitter);
-
-    yaml_emitter_set_output_file(&emitter, file);
-
-    yaml_event_t event;
-
-    // Start YAML document
-    yaml_stream_start_event_initialize(&event, YAML_UTF8_ENCODING);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Start document
-    yaml_document_start_event_initialize(&event, NULL, NULL, NULL, 0);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Write Cargo struct fields
-    yaml_mapping_start_event_initialize(&event, NULL, NULL, 1, YAML_BLOCK_MAPPING_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Title
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"title", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->title, strlen(cargo->title), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Type
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"type", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->type, strlen(cargo->type), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Source
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"source", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->source, strlen(cargo->source), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Content (assuming it is a string)
-    if (cargo->content) {
-        yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"content", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-        yaml_emitter_emit(&emitter, &event);
-
-        yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->content, strlen(cargo->content), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-        yaml_emitter_emit(&emitter, &event);
+    // Save JSON to file
+    FILE *file = fopen(filename, "w");
+    if (file != NULL) {
+        fprintf(file, "%s\n", jsonString);
+        fclose(file);
+    } else {
+        fprintf(stderr, "Error opening file for writing.\n");
     }
 
-    // URLs
-    if (cargo->num_urls > 0) {
-        yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"urls", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-        yaml_emitter_emit(&emitter, &event);
-
-        yaml_sequence_start_event_initialize(&event, NULL, NULL, 1, YAML_BLOCK_SEQUENCE_STYLE);
-        yaml_emitter_emit(&emitter, &event);
-
-        for (int i = 0; i < cargo->num_urls; i++) {
-            yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->urls[i], strlen(cargo->urls[i]), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-            yaml_emitter_emit(&emitter, &event);
-        }
-
-        yaml_sequence_end_event_initialize(&event);
-        yaml_emitter_emit(&emitter, &event);
-    }
-
-    // Emails
-    if (cargo->num_emails > 0) {
-        yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)"emails", -1, 1, 0, YAML_PLAIN_SCALAR_STYLE);
-        yaml_emitter_emit(&emitter, &event);
-
-        yaml_sequence_start_event_initialize(&event, NULL, NULL, 1, YAML_BLOCK_SEQUENCE_STYLE);
-        yaml_emitter_emit(&emitter, &event);
-
-        for (int i = 0; i < cargo->num_emails; i++) {
-            yaml_scalar_event_initialize(&event, NULL, NULL, (yaml_char_t *)cargo->emails[i], strlen(cargo->emails[i]), 1, 0, YAML_PLAIN_SCALAR_STYLE);
-            yaml_emitter_emit(&emitter, &event);
-        }
-
-        yaml_sequence_end_event_initialize(&event);
-        yaml_emitter_emit(&emitter, &event);
-    }
-
-    // End mapping
-    yaml_mapping_end_event_initialize(&event);
-    yaml_emitter_emit(&emitter, &event);
-
-    // End document
-    yaml_document_end_event_initialize(&event, 0);
-    yaml_emitter_emit(&emitter, &event);
-
-    // End stream
-    yaml_stream_end_event_initialize(&event);
-    yaml_emitter_emit(&emitter, &event);
-
-    // Clean up
-    yaml_emitter_delete(&emitter);
-    fclose(file);
+    // Free cJSON objects and JSON string
+    cJSON_Delete(root);
+    free(jsonString);
 }
+
+

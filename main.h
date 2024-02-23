@@ -6,6 +6,8 @@
 
 #define MAX_URLS 35
 
+#define PATH_MAX 1024
+
 // clipboard item structure 
 struct Cargo {
     char title[31];
@@ -24,16 +26,20 @@ void search_urls(struct Cargo *cargo, const char *text);
 
 void search_emails(struct Cargo *cargo, const char *text);
 
+char* calc_filename(const char* folder_path);
+
+void cargo_to_json(struct Cargo *cargo);
+
 void search_content(char *clipboardText);
 
 void search_html(char *htmlText);
 
 void cargo_out();
 
-void write_cargo_to_yaml(const char *filename, const struct Cargo *cargo);
-
 void reset_cargo();
 
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+struct Cargo CargoClip;
 
 #endif

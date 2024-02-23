@@ -6,6 +6,8 @@
         "stdlib.h": "c",
         "main.h": "c",
         "ctype.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "dirent.h": "c",
+        "cjson.h": "c"
     }
 }

@@ -6,53 +6,6 @@
 
 #include "../main.h"
 
-struct Cargo CargoClip;
-// final function that gets processed
-
-void cargo_out()
-{
-    printf("\n\n\033[36m#############################################\033[0m\n");
-
-    printf("\n\033[33mtitle   > \n\033[0m%s", CargoClip.title);
-    printf("\n\033[33msource  > \n\033[0m%s", CargoClip.source);
-
-    printf("\n\033[33murls    > %d\033[0m \n", CargoClip.num_urls);
-    for (int i = 0; i < CargoClip.num_urls; ++i)
-    {
-        printf("\t > %s\n", CargoClip.urls[i]);
-    }
-
-    printf("\n\033[33memails  > %d\033[0m \n", CargoClip.num_emails);
-    for (int i = 0; i < CargoClip.num_emails; ++i)
-    {
-        printf("\t > %s\n", CargoClip.emails[i]);
-    }
-
-    printf("\n\033[33mcontent > \033[0m\n%s\n", CargoClip.content);
-
-    write_cargo_to_yaml("output.yaml", &CargoClip);
-    reset_cargo();
-}
-
-void reset_cargo()
-{
-    memset(CargoClip.title, 0, sizeof(CargoClip.title));
-    memset(CargoClip.type, 0, sizeof(CargoClip.type));
-    memset(CargoClip.source, 0, sizeof(CargoClip.source));
-    memset(CargoClip.content, 0, strlen(CargoClip.content));
-
-    for (int i = 0; i < MAX_URLS; ++i)
-    {
-        memset(CargoClip.urls[i], 0, sizeof(CargoClip.urls[i]));
-        memset(CargoClip.emails[i], 0, sizeof(CargoClip.emails[i]));
-    }
-
-    CargoClip.num_urls = 0;
-    CargoClip.num_emails = 0;
-
-    free(CargoClip.content);
-}
-
 // function that searches for urls in the content
 void search_urls(struct Cargo *cargo, const char *text)
 {
@@ -161,7 +114,7 @@ void search_content(char *clipboardText)
     search_urls(&CargoClip, CargoClip.content);
     search_emails(&CargoClip, CargoClip.content);
 
-    cargo_out();
+    cargo_out(&CargoClip);
 }
 
 // catches the source url of the copied place if the copied part is from html

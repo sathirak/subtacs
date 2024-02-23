@@ -3,17 +3,17 @@
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build active file",
-            "command": "C:\\MinGW\\bin\\g++.exe",
+            "command": "gcc",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
                 "${workspaceFolder}\\components\\processor.c",
                 "${workspaceFolder}\\components\\storant.c",
+                "${workspaceFolder}\\components\\spitter.c",
+                "${workspaceFolder}\\lib\\cJSON.c",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
-                "-I",
-                "${workspaceFolder}\\lib" 
+                "${fileDirname}\\${fileBasenameNoExtension}.exe"
             ],
             "options": {
                 "cwd": "C:\\MinGW\\bin"
