@@ -20,8 +20,6 @@ struct Cargo {
 };
 
 
-
-
 void search_urls(struct Cargo *cargo, const char *text);
 
 void search_emails(struct Cargo *cargo, const char *text);
@@ -31,6 +29,8 @@ void search_content(char *clipboardText);
 void search_html(char *htmlText);
 
 void cargo_out();
+
+void write_cargo_to_yaml(const char *filename, const struct Cargo *cargo);
 
 void reset_cargo();
 

@@ -11,7 +11,7 @@ struct Cargo CargoClip;
 
 void cargo_out()
 {
-    printf("\n\n\033[34m#############################################\033[0m\n");
+    printf("\n\n\033[36m#############################################\033[0m\n");
 
     printf("\n\033[33mtitle   > \n\033[0m%s", CargoClip.title);
     printf("\n\033[33msource  > \n\033[0m%s", CargoClip.source);
@@ -30,6 +30,7 @@ void cargo_out()
 
     printf("\n\033[33mcontent > \033[0m\n%s\n", CargoClip.content);
 
+    write_cargo_to_yaml("output.yaml", &CargoClip);
     reset_cargo();
 }
 

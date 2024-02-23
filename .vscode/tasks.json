@@ -9,8 +9,11 @@
                 "-g",
                 "${file}",
                 "${workspaceFolder}\\components\\processor.c",
+                "${workspaceFolder}\\components\\storant.c",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "-I",
+                "${workspaceFolder}\\lib" 
             ],
             "options": {
                 "cwd": "C:\\MinGW\\bin"
