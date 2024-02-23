@@ -13,7 +13,7 @@ BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
     // Open the clipboard
     if (OpenClipboard(hwnd))
     {
-        
+        struct Cargo CargoClip;
         // Check for HTML format
         UINT htmlFormat = RegisterClipboardFormat(TEXT("HTML Format"));
 

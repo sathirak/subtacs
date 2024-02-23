@@ -30,6 +30,25 @@ void cargo_out()
 
     printf("\n\033[33mcontent > \033[0m\n%s\n", CargoClip.content);
 
+    reset_cargo();
+}
+
+void reset_cargo()
+{
+    memset(CargoClip.title, 0, sizeof(CargoClip.title));
+    memset(CargoClip.type, 0, sizeof(CargoClip.type));
+    memset(CargoClip.source, 0, sizeof(CargoClip.source));
+    memset(CargoClip.content, 0, strlen(CargoClip.content));
+
+    for (int i = 0; i < MAX_URLS; ++i)
+    {
+        memset(CargoClip.urls[i], 0, sizeof(CargoClip.urls[i]));
+        memset(CargoClip.emails[i], 0, sizeof(CargoClip.emails[i]));
+    }
+
+    CargoClip.num_urls = 0;
+    CargoClip.num_emails = 0;
+
     free(CargoClip.content);
 }
 
@@ -71,19 +90,24 @@ int email_invalid_char(char c)
 }
 
 // main function that catches emails
-void search_emails(struct Cargo *cargo, const char *text) {
+void search_emails(struct Cargo *cargo, const char *text)
+{
     int i = 0;
-    while (text[i] != '\0') {
-        if (text[i] == '@') {
+    while (text[i] != '\0')
+    {
+        if (text[i] == '@')
+        {
             char email[MAX_EMAIL_LENGTH];
             int j = i - 1;
             int k = 0;
 
             // Extracting characters before '@' (local part)
-            while (j >= 0 && email_valid_char(text[j]) && !email_invalid_char(text[j]) && k < MAX_EMAIL_LENGTH - 1) {
+            while (j >= 0 && email_valid_char(text[j]) && !email_invalid_char(text[j]) && k < MAX_EMAIL_LENGTH - 1)
+            {
                 email[k++] = text[j--];
             }
-            if (k == 0) {
+            if (k == 0)
+            {
                 i++;
                 continue; // No characters found before '@', move to the next character
             }
@@ -95,7 +119,8 @@ void search_emails(struct Cargo *cargo, const char *text) {
             // Extracting characters after '@' (domain part)
             int l = i + 1;
             int m = 0;
-            while (text[l] != '\0' && email_valid_char(text[l]) && !email_invalid_char(text[l]) && m < MAX_EMAIL_LENGTH - 1) {
+            while (text[l] != '\0' && email_valid_char(text[l]) && !email_invalid_char(text[l]) && m < MAX_EMAIL_LENGTH - 1)
+            {
                 email[k + m] = text[l];
                 l++;
                 m++;
@@ -115,9 +140,8 @@ void search_emails(struct Cargo *cargo, const char *text) {
 }
 
 // main function of the script that parses the raw content
-void search_content(char *clipboardText) {
-
-    
+void search_content(char *clipboardText)
+{
 
     // Extract title (up to 30 characters or until a newline character)
     int titleLength = strcspn(clipboardText, "\n");
@@ -133,16 +157,10 @@ void search_content(char *clipboardText) {
         exit(EXIT_FAILURE);
     }
 
-    CargoClip.num_urls = 0; // Reset num_urls for the new array
-    memset(CargoClip.urls, 0, sizeof(CargoClip.urls));     
-    
-    CargoClip.num_emails = 0; // Reset num_emails for the new array
-    memset(CargoClip.emails, 0, sizeof(CargoClip.emails)); 
-
     search_urls(&CargoClip, CargoClip.content);
     search_emails(&CargoClip, CargoClip.content);
 
-    cargo_out();    
+    cargo_out();
 }
 
 // catches the source url of the copied place if the copied part is from html

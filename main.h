@@ -32,6 +32,8 @@ void search_html(char *htmlText);
 
 void cargo_out();
 
+void reset_cargo();
+
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 #endif
