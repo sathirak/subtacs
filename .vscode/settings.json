@@ -2,6 +2,10 @@
     "files.associations": {
         "*.embeddedhtml": "html",
         "stdio.h": "c",
-        "windows.h": "c"
+        "windows.h": "c",
+        "stdlib.h": "c",
+        "main.h": "c",
+        "ctype.h": "c",
+        "string.h": "c"
     }
 }

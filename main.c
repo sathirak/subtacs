@@ -1,54 +1,90 @@
 #include <windows.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <ctype.h>
+
+#include "main.h"
 
 HWND hwndNextViewer; // Handle to the next clipboard viewer
 
-// Function to handle clipboard changes
-LRESULT CALLBACK ClipboardViewerProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam) {
-    if (uMsg == WM_DRAWCLIPBOARD) {
-        // Clipboard content has changed\033[31mThis text is in red\033[0m
-        printf("\n\n\033[36m_______________________________________\033[0m\n\n");
+BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    // Open the clipboard
+    if (OpenClipboard(hwnd))
+    {
+        
+        // Check for HTML format
+        UINT htmlFormat = RegisterClipboardFormat(TEXT("HTML Format"));
 
-        // Open the clipboard
-        if (OpenClipboard(hwnd)) {
-            // Get the clipboard data handle
-            HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+        HANDLE hHtmlData = GetClipboardData(htmlFormat);
 
-            if (hClipboardData != NULL) {
-                // Lock the data to get a pointer to the text
-                char* clipboardText = (char*)GlobalLock(hClipboardData);
+        if (hHtmlData != NULL)
+        {
+            // Lock the data to get a pointer to the HTML text
+            char *htmlText = (char *)GlobalLock(hHtmlData);
 
-                if (clipboardText != NULL) {
+            if (htmlText != NULL)
+            {
+                // Find and print HTML content
+                search_html(htmlText);
 
-                    int length = strcspn(clipboardText, "\n");
-                    length = (length > 30) ? 30 : length;
-
-                    printf("\033[33m%.*s", length, clipboardText);
-
-                    printf("\n______________\033[0m");
-                    printf("\n\n %s", clipboardText);
-
-                    // Unlock the data
-                    GlobalUnlock(hClipboardData);
-                }
+                // Unlock the data
+                GlobalUnlock(hHtmlData);
             }
-
-            // Close the clipboard
-            CloseClipboard();
         }
 
+        // Handle plain text format (CF_TEXT)
+        HANDLE hClipboardData = GetClipboardData(CF_TEXT);
+
+        if (hClipboardData != NULL)
+        {
+            // Lock the data to get a pointer to the text
+            char *clipboardText = (char *)GlobalLock(hClipboardData);
+
+            if (clipboardText != NULL)
+            {
+                // Output the plain text content
+                search_content(clipboardText);
+
+                // Unlock the data
+                GlobalUnlock(hClipboardData);
+            }
+        }
+
+        // Close the clipboard
+        CloseClipboard();
+
+        return TRUE;
+    }
+
+    return FALSE;
+}
+
+LRESULT CALLBACK view_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+    if (uMsg == WM_DRAWCLIPBOARD)
+    {
+        // Open the clipboard
+        if (uMsg == WM_DRAWCLIPBOARD)
+        {
+            // Open the clipboard
+            if (open_clipboard(hwnd, uMsg, wParam, lParam))
+            {
+                // Call the next viewer in the chain
+                SendMessage(hwndNextViewer, uMsg, wParam, lParam);
+            }
+        }
         // Call the next viewer in the chain
         SendMessage(hwndNextViewer, uMsg, wParam, lParam);
     }
-
     // Call the default window procedure for other messages
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-
 // Function to set up the clipboard viewer
-// Function to set up the clipboard viewer
-void SetupClipboardViewer() {
+void SetupClipboardViewer()
+{
     // Create an invisible window to handle clipboard messages
     HWND hwnd = CreateWindowW(
         L"STATIC",
@@ -59,18 +95,17 @@ void SetupClipboardViewer() {
         NULL,
         NULL,
         NULL,
-        NULL
-    );
+        NULL);
 
     // Set the clipboard viewer window procedure
-    SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)ClipboardViewerProc);
+    SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)view_clipboard);
 
     // Set up as a clipboard viewer and get the handle to the next viewer
     hwndNextViewer = SetClipboardViewer(hwnd);
 }
 
-
-int main() {
+int main()
+{
 
     SetConsoleTitle("subtacs");
     // Set up the clipboard viewer
@@ -78,7 +113,8 @@ int main() {
 
     // Run the message loop
     MSG msg;
-    while (GetMessage(&msg, NULL, 0, 0)) {
+    while (GetMessage(&msg, NULL, 0, 0))
+    {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
