@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <time.h>
 
 #include "../main.h"
 
 // function that searches for urls in the content
-void search_urls(struct Cargo *cargo, const char *text)
+void check_urls(struct clipboard_container *cargo, const char *text)
 {
     // Search for URLs in the text and store them in the Cargo struct
     const char *urlStart = text;
@@ -44,7 +45,7 @@ int email_invalid_char(char c)
 }
 
 // main function that catches emails
-void search_emails(struct Cargo *cargo, const char *text)
+void check_emails(struct clipboard_container *cargo, const char *text)
 {
     int i = 0;
     while (text[i] != '\0')
@@ -94,35 +95,40 @@ void search_emails(struct Cargo *cargo, const char *text)
 }
 
 // main function of the script that parses the raw content
-void search_content(char *clipboardText)
+void process_container_in(char *clipboard_content)
 {
 
+    time_t currentTime;
+    time(&currentTime);
+
+    container_in.date_time = ctime(&currentTime);
+
     // Extract title (up to 30 characters or until a newline character)
-    int titleLength = strcspn(clipboardText, "\n");
+    int titleLength = strcspn(clipboard_content, "\n");
     titleLength = (titleLength > 30) ? 30 : titleLength;
-    snprintf(CargoClip.title, sizeof(CargoClip.title), "%.*s", titleLength, clipboardText);
+    snprintf(container_in.title, sizeof(container_in.title), "%.*s", titleLength, clipboard_content);
 
     // Dynamically allocate memory for content
-    CargoClip.content = strdup(clipboardText);
-    if (CargoClip.content == NULL)
+    container_in.content = strdup(clipboard_content);
+    if (container_in.content == NULL)
     {
         // Handle allocation failure
         fprintf(stderr, "Memory allocation failed for content.\n");
         exit(EXIT_FAILURE);
     }
 
-    search_urls(&CargoClip, CargoClip.content);
-    search_emails(&CargoClip, CargoClip.content);
+    check_urls(&container_in, container_in.content);
+    check_emails(&container_in, container_in.content);
 
-    cargo_out(&CargoClip);
+    output_container_in(&container_in);
 }
 
 // catches the source url of the copied place if the copied part is from html
-void search_html(char *htmlText)
+void check_html(char *clipboard_html_content)
 {
 
-    char *urlStart = strstr(htmlText, "SourceURL:");
-    char *urlEnd = strstr(htmlText, "<html>");
+    char *urlStart = strstr(clipboard_html_content, "SourceURL:");
+    char *urlEnd = strstr(clipboard_html_content, "<html>");
 
     // this is a hardcoded function that can strip out the sourceurl likely will change
     if (urlStart != NULL && urlEnd != NULL)
@@ -135,11 +141,11 @@ void search_html(char *htmlText)
         strncpy(url, urlStart, urlLength);
         url[urlLength] = '\0';
 
-        snprintf(CargoClip.source, sizeof(CargoClip.source), "%.*s", 256, url);
+        snprintf(container_in.source, sizeof(container_in.source), "%.*s", 256, url);
 
         free(url);
     }
 
     // Output the HTML content
-    // printf("\nHTML Content > %s", htmlText);
+    // printf("\nHTML Content > %s", clipboard_html_content);
 }
