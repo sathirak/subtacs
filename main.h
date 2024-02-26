@@ -21,6 +21,7 @@ struct clipboard_container {
     char *date_time;
 };
 
+void handle_configuration();
 
 void check_urls(struct clipboard_container *cargo, const char *text);
 

@@ -1,0 +1,9 @@
+{
+	"title":	"{\r",
+	"type":	"",
+	"source":	"",
+	"date-time":	"Mon Feb 26 21:54:12 2024\n",
+	"content":	"{\r\n  \"name\": \"Catppuccin Macchiato\",\r\n\r\n  \"cursorColor\": \"#F4DBD6\",\r\n  \"selectionBackground\": \"#5B6078\",\r\n\r\n  \"background\": \"#24273A\",\r\n  \"foreground\": \"#CAD3F5\",\r\n\r\n  \"black\": \"#494D64\",\r\n  \"red\": \"#ED8796\",\r\n  \"green\": \"#A6DA95\",\r\n  \"yellow\": \"#EED49F\",\r\n  \"blue\": \"#8AADF4\",\r\n  \"purple\": \"#F5BDE6\",\r\n  \"cyan\": \"#8BD5CA\",\r\n  \"white\": \"#B8C0E0\",\r\n\r\n  \"brightBlack\": \"#5B6078\",\r\n  \"brightRed\": \"#ED8796\",\r\n  \"brightGreen\": \"#A6DA95\",\r\n  \"brightYellow\": \"#EED49F\",\r\n  \"brightBlue\": \"#8AADF4\",\r\n  \"brightPurple\": \"#F5BDE6\",\r\n  \"brightCyan\": \"#8BD5CA\",\r\n  \"brightWhite\": \"#A5ADCB\"\r\n}",
+	"urls":	[],
+	"emails":	[]
+}

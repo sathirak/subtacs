@@ -24,8 +24,6 @@ void check_urls(struct clipboard_container *cargo, const char *text)
         strncpy(cargo->urls[cargo->num_urls], urlStart, urlLength);
         cargo->urls[cargo->num_urls][urlLength] = '\0';
 
-        printf("URL > %s\n", cargo->urls[cargo->num_urls]);
-
         cargo->num_urls++;
 
         // Move the pointer to search for the next URL
@@ -113,7 +111,7 @@ void process_container_in(char *clipboard_content)
     if (container_in.content == NULL)
     {
         // Handle allocation failure
-        fprintf(stderr, "Memory allocation failed for content.\n");
+        fprintf(stderr, "[ error ] memory allocation failed for content.\n");
         exit(EXIT_FAILURE);
     }
 

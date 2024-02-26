@@ -10,7 +10,6 @@ struct clipboard_container container_in;
 
 HWND hwndNextViewer; // Handle to the next clipboard viewer
 
-
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     // Open the clipboard
@@ -111,6 +110,9 @@ int main()
 {
 
     SetConsoleTitle("subtacs");
+
+    handle_configuration();
+    
     // Set up the clipboard viewer
     SetupClipboardViewer();
 

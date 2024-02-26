@@ -1,0 +1,9 @@
+{
+	"title":	"longer than 30 characters, it ",
+	"type":	"",
+	"source":	"https://chat.openai.com/c/32bdd8e6-6a65-499f-80e2-3a601a4f19da\r\n",
+	"date-time":	"Mon Feb 26 22:15:15 2024\n",
+	"content":	"longer than 30 characters, it will be truncated to fit within that width, followed by the ellipsis. If the title is shorter than 30 characters, it will be padded with spaces to reach the specified width.\r\n\r\nEnsure that you replace the 30 with an appropriate width that accommodates the longest expected title in your application. Adjust the width based on your requirements.\r\n\r\n\r\n\r\n\r\n\r\n",
+	"urls":	[],
+	"emails":	[]
+}

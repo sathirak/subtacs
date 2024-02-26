@@ -17,7 +17,7 @@ int get_filenumber(const char* folder_path) {
     // Open the directory
     dir = opendir(folder_path);
     if (dir == NULL) {
-        perror("Unable to open directory");
+        perror("[ error ] unable to open directory \n");
         return -1; // Return -1 to indicate an error
     }
 
@@ -65,7 +65,7 @@ void convert_to_json(struct clipboard_container *cargo) {
     int file_count = get_filenumber("./data");
 
     if (file_count == -1) {
-        fprintf(stderr, "Error calculating filename.\n");
+        fprintf(stderr, "[ error ] error calculating filename.\n");
         cJSON_Delete(root);
         free(jsonString);
         return;
@@ -78,7 +78,7 @@ void convert_to_json(struct clipboard_container *cargo) {
         fprintf(file, "%s\n", jsonString);
         fclose(file);
     } else {
-        fprintf(stderr, "Error opening file for writing.\n");
+        fprintf(stderr, "[ error ] error opening %s for writing.\n", filename);
     }
 
     cJSON_Delete(root);

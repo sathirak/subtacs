@@ -7,17 +7,10 @@
 
 void output_container_in()
 {
-    printf("\n\033[36m_____________\033[0m\n");
+    printf("\n  ---------------------");
 
-    printf("\n\033[33mtitle   >\033[0m %s", container_in.title);
-
-    printf("\n\033[33msource  >\033[0m %s", container_in.source);
-
-    printf("\033[33mtime    >\033[0m %s", container_in.date_time);
-
-    printf("\033[33murls    >\033[0m %d", container_in.num_urls);
-
-    printf("\n\033[33memails  >\033[0m %d", container_in.num_emails);
+    printf("\n  [ i ] title   > %-20s", container_in.title);
+    printf("\n  [ i ] source  > %-20s", container_in.source);
 
     convert_to_json(&container_in);
     reset_container();

@@ -1,0 +1,9 @@
+{
+	"title":	"printf(\"\\n  [ i ] title   > %-",
+	"type":	"",
+	"source":	"",
+	"date-time":	"Mon Feb 26 22:11:28 2024\n",
+	"content":	"printf(\"\\n  [ i ] title   > %-30s...\", container_in.title);\r\n",
+	"urls":	[],
+	"emails":	[]
+}

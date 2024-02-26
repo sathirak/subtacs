@@ -58,9 +58,10 @@
                 "${workspaceFolder}\\components\\processor.c",
                 "${workspaceFolder}\\components\\storant.c",
                 "${workspaceFolder}\\components\\spitter.c",
+                "${workspaceFolder}\\components\\configurator.c",
                 "${workspaceFolder}\\lib\\cJSON.c",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe",
+                "${fileDirname}\\subtacs.exe",
                 "-luser32"
             ],
             "options": {
