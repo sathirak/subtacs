@@ -6,14 +6,17 @@
 
 #include "main.h"
 
+struct clipboard_container container_in;
+
 HWND hwndNextViewer; // Handle to the next clipboard viewer
+
 
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     // Open the clipboard
     if (OpenClipboard(hwnd))
     {
-        struct Cargo CargoClip;
+        struct clipboard_container CargoClip;
         // Check for HTML format
         UINT htmlFormat = RegisterClipboardFormat(TEXT("HTML Format"));
 
@@ -27,7 +30,7 @@ BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             if (htmlText != NULL)
             {
                 // Find and print HTML content
-                search_html(htmlText);
+                check_html(htmlText);
 
                 // Unlock the data
                 GlobalUnlock(hHtmlData);
@@ -44,8 +47,8 @@ BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
             if (clipboardText != NULL)
             {
-                // Output the plain text content
-                search_content(clipboardText);
+                // process the plain text content
+                process_container_in(clipboardText);
 
                 // Unlock the data
                 GlobalUnlock(hClipboardData);

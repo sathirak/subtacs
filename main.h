@@ -6,10 +6,10 @@
 
 #define MAX_URLS 35
 
-#define PATH_MAX 1024
+#define FILE_PATH_MAX 1024
 
 // clipboard item structure 
-struct Cargo {
+struct clipboard_container {
     char title[31];
     char type[20];
     char source[256];
@@ -18,28 +18,32 @@ struct Cargo {
     int num_urls;
     char emails[MAX_URLS][256];
     int num_emails;
-
+    char *date_time;
 };
 
 
-void search_urls(struct Cargo *cargo, const char *text);
+void check_urls(struct clipboard_container *cargo, const char *text);
 
-void search_emails(struct Cargo *cargo, const char *text);
+void check_emails(struct clipboard_container *cargo, const char *text);
 
-char* calc_filename(const char* folder_path);
+int get_filenumber(const char* folder_path);
 
-void cargo_to_json(struct Cargo *cargo);
+void convert_to_json(struct clipboard_container *cargo);
 
-void search_content(char *clipboardText);
+void process_container_in(char *clipboard_text);
 
-void search_html(char *htmlText);
+void check_html(char *clipboard_html_content);
 
-void cargo_out();
+void output_container_in();
 
-void reset_cargo();
+void reset_container();
+
+void output_window(HWND hwnd, const char *text);
 
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-struct Cargo CargoClip;
+extern struct clipboard_container container_in;
+
+
 
 #endif
