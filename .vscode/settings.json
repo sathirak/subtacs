@@ -8,7 +8,6 @@
         "ctype.h": "c",
         "string.h": "c",
         "dirent.h": "c",
-        "cjson.h": "c",
-        "*.rh": "c"
+        "cjson.h": "c"
     }
 }
