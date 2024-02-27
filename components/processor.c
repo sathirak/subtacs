@@ -118,6 +118,8 @@ void process_container_in(char *clipboard_content)
     check_urls(&container_in, container_in.content);
     check_emails(&container_in, container_in.content);
 
+    int file_name = get_filenumber("./data");
+    container_in.id = file_name;
     output_container_in(&container_in);
 }
 
@@ -139,7 +141,8 @@ void check_html(char *clipboard_html_content)
         strncpy(url, urlStart, urlLength);
         url[urlLength] = '\0';
 
-        snprintf(container_in.source, sizeof(container_in.source), "%.*s", 256, url);
+        int clean_source = strcspn(url, "\r\n");
+        snprintf(container_in.source, sizeof(container_in.source), "%.*s", clean_source, url);
 
         free(url);
     }

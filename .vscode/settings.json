@@ -9,6 +9,7 @@
         "string.h": "c",
         "dirent.h": "c",
         "cjson.h": "c",
-        "*.rh": "c"
+        "*.rh": "c",
+        "stat.h": "c"
     }
 }

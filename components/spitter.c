@@ -5,12 +5,26 @@
 #include <ctype.h>
 #include "../main.h"
 
+void remove_escape_chars(char *str)
+{
+    int i, j;
+    for (i = 0, j = 0; str[i] != '\0'; i++)
+    {
+        if (str[i] != '\\' && str[i] != '\n' && str[i] != '\t' && str[i] != '\r' && str[i] != '\f' && str[i] != '\b')
+        {
+            str[j++] = str[i];
+        }
+    }
+    str[j] = '\0';
+}
+
 void output_container_in()
 {
-    printf("\n  ---------------------");
+    remove_escape_chars(container_in.title);
 
-    printf("\n  [ i ] title   > %-20s", container_in.title);
-    printf("\n  [ i ] source  > %-20s", container_in.source);
+    printf("\n\033[1;36m  %d > %-30.30s... \033[0m",container_in.id,container_in.title);
+
+    printf("\n");
 
     convert_to_json(&container_in);
     reset_container();

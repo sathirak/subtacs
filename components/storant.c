@@ -41,12 +41,14 @@ int get_filenumber(const char* folder_path) {
 void convert_to_json(struct clipboard_container *cargo) {
 
     cJSON *root = cJSON_CreateObject();
-
+    
+    cJSON_AddNumberToObject(root, "id", cargo->id);
     cJSON_AddStringToObject(root, "title", cargo->title);
     cJSON_AddStringToObject(root, "type", cargo->type);
     cJSON_AddStringToObject(root, "source", cargo->source);
     cJSON_AddStringToObject(root, "date-time", cargo->date_time);
     cJSON_AddStringToObject(root, "content", cargo->content);
+    cJSON_AddStringToObject(root, "owner-class", cargo->owner_class);
 
     cJSON *urlsArray = cJSON_AddArrayToObject(root, "urls");
     for (int i = 0; i < cargo->num_urls; ++i) {

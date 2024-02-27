@@ -18,7 +18,9 @@ struct clipboard_container {
     int num_urls;
     char emails[MAX_URLS][256];
     int num_emails;
+    int id;
     char *date_time;
+    char owner_class[256];
 };
 
 void handle_configuration();

@@ -10,6 +10,7 @@ struct clipboard_container container_in;
 
 HWND hwndNextViewer; // Handle to the next clipboard viewer
 
+
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
     // Open the clipboard
@@ -54,6 +55,16 @@ BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
             }
         }
 
+        HWND hwndOwner = GetClipboardOwner();
+
+        if (hwndOwner != NULL)
+        {
+
+            char owner_class[256];
+            GetClassNameA(hwndOwner, owner_class, sizeof(owner_class));
+            strcpy(container_in.owner_class, owner_class);
+        }
+
         // Close the clipboard
         CloseClipboard();
 
@@ -72,6 +83,7 @@ LRESULT CALLBACK view_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
         {
             // Open the clipboard
             if (open_clipboard(hwnd, uMsg, wParam, lParam))
+
             {
                 // Call the next viewer in the chain
                 SendMessage(hwndNextViewer, uMsg, wParam, lParam);
