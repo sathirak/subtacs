@@ -1,18 +1,47 @@
-<h1 align="center">Subtacs</h1>
+# SubTacs
 
-<p align="center">Subtacs is a tool aimed at developers to streamline the process of managing and tracking clipboard items. It provides a robust console interface to facilitate efficient tracking and resolution of clipboard items, helping developers find useful code and snippets that they have stored.
-</p>
+SubTacs is a clipboard management tool designed specifically for developers. It allows you to easily copy and save code snippets along with the website URLs where the code originated from. This way, you can keep track of your code sources and quickly access them when needed.
 
-<h2 align="center">Features</h2>
+## Features
 
-<ul align="center">
-  
-  **Efficient Tracking** Easily identify and track lost code snippets within your device. <br/>
-  
-  **Console Interface** Intuitive command-line interface for seamless navigation and interaction. <br/>
-  
-  **Customizable Tags** Tagging system to categorize and prioritize code snippets and site links associated with the snippets<br/>
-  
-  **Version Control Integration** Seamlessly integrates with windows for enhanced workflow.<br/>
-  
-</ul>
+- **Clipboard Monitoring**: SubTacs automatically captures any text copied to your clipboard.
+- **Source URL Tracking**: When copying code snippets, SubTacs also captures the website URL of the source.
+- **Code Snippet Management**: Easily browse, search, and manage your saved code snippets and their associated URLs.
+- **Quick Access**: Quickly retrieve and paste saved code snippets with just a few clicks or keyboard shortcuts.
+- **Cross-Platform**: SubTacs is available for Windows, macOS, and Linux, ensuring a consistent experience across different operating systems.
+
+## Installation
+
+1. Visit the [SubTacs website](https://subtacs.com) and download the installer for your operating system.
+2. Run the installer and follow the on-screen instructions to complete the installation process.
+
+## Usage
+
+Once installed, SubTacs will automatically run in the background and monitor your clipboard. Here's how you can use it:
+
+1. Copy any text or code snippet to your clipboard as you normally would.
+2. In the SubTacs application, you'll see the copied text along with the URL of the source website (if applicable).
+3. Right-click on the entry or use the keyboard shortcut (`Ctrl+Shift+V` on Windows/Linux, `Cmd+Shift+V` on macOS) to paste the copied text.
+4. To access the source URL, simply click on the URL in the SubTacs application.
+
+For more advanced usage and configuration options, please refer to the [SubTacs documentation](https://subtacs.com/docs).
+
+## Contributing
+
+We welcome contributions from the community! If you'd like to contribute to SubTacs, please follow these steps:
+
+1. Fork the repository on GitHub.
+2. Create a new branch for your feature or bug fix.
+3. Make your changes and commit them with descriptive commit messages.
+4. Push your changes to your forked repository.
+5. Submit a pull request to the main repository.
+
+Please ensure that your code adheres to our coding standards and includes appropriate tests.
+
+## License
+
+SubTacs is released under the [MIT License](LICENSE).
+
+## Support
+
+If you encounter any issues or have questions, please visit our [support forum](https://subtacs.com/support) or contact us at [support@subtacs.com](mailto:support@subtacs.com).
