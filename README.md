@@ -12,8 +12,7 @@ SubTacs is a clipboard management tool designed specifically for developers. It 
 
 ## Installation
 
-1. Visit the [SubTacs website](https://subtacs.com) and download the installer for your operating system.
-2. Run the installer and follow the on-screen instructions to complete the installation process.
+Download the subtacs.exe file from above source code
 
 ## Usage
 
