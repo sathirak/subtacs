@@ -18,7 +18,6 @@ struct clipboard_container {
     int num_urls;
     char emails[MAX_URLS][256];
     int num_emails;
-    int id;
     char *date_time;
     char owner_class[256];
 };
@@ -29,9 +28,7 @@ void check_urls(struct clipboard_container *cargo, const char *text);
 
 void check_emails(struct clipboard_container *cargo, const char *text);
 
-int get_filenumber(const char* folder_path);
-
-void convert_to_json(struct clipboard_container *cargo);
+void insert_to_db(struct clipboard_container *cargo);
 
 void process_container_in(char *clipboard_text);
 
@@ -40,8 +37,6 @@ void check_html(char *clipboard_html_content);
 void output_container_in();
 
 void reset_container();
-
-void output_window(HWND hwnd, const char *text);
 
 BOOL open_clipboard(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 

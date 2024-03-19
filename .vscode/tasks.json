@@ -36,6 +36,7 @@
                 "${workspaceFolder}\\components\\spitter.c",
                 "${workspaceFolder}\\components\\configurator.c",
                 "${workspaceFolder}\\lib\\cJSON.c",
+                "${workspaceFolder}\\lib\\sqlite\\sqlite3.c",
                 "-o",
                 "${fileDirname}\\subtacs.exe"
             ],

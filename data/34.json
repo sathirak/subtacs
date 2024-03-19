@@ -1,9 +1,0 @@
-{
-	"title":	"re that the ellipsis (...) app",
-	"type":	"",
-	"source":	"https://chat.openai.com/c/32bdd8e6-6a65-499f-80e2-3a601a4f19da\r\n",
-	"date-time":	"Mon Feb 26 22:15:20 2024\n",
-	"content":	"re that the ellipsis (...) appears at the end of the visible title without truncating the title itself, you should specify the width of the title field in printf. Here's the corrected printf statement:",
-	"urls":	[],
-	"emails":	[]
-}

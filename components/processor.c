@@ -118,8 +118,6 @@ void process_container_in(char *clipboard_content)
     check_urls(&container_in, container_in.content);
     check_emails(&container_in, container_in.content);
 
-    int file_name = get_filenumber("./data");
-    container_in.id = file_name;
     output_container_in(&container_in);
 }
 

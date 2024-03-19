@@ -10,6 +10,7 @@
         "dirent.h": "c",
         "cjson.h": "c",
         "*.rh": "c",
-        "stat.h": "c"
+        "stat.h": "c",
+        "string": "c"
     }
 }

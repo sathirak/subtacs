@@ -1,17 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "../lib/sqlite/sqlite3.h"
 #include "../lib/cJSON.h"
-
-const char *language_to_string(int language);
-// Enum for development languages
-enum DevelopmentLanguages {
-    C,
-    CPlusPlus,
-    Java,
-    Python,
-    JavaScript,
-    NumLanguages
-};
 
 // Function to check if the file exists
 int check_file_existence(const char *filename) {
@@ -44,6 +34,7 @@ int create_file(const char *filename) {
 // Function to handle configuration file existence
 void handle_configuration() {
     const char *config_file = "subtacs.json";
+    const char *cargo_db = "cargo.db";
 
     // Check if the file exists
     if (!check_file_existence(config_file)) {
@@ -59,37 +50,12 @@ void handle_configuration() {
 
 
         printf("   [ configuring ] enter windows version >  ");
-        scanf("%s  \n", windows_version);
-
-        int selectedLanguages[NumLanguages] = {0}; // Array to store user-selected languages
-
-        for (int i = 0; i < NumLanguages; ++i) {
-            printf("       %d. %s\n", i + 1, language_to_string(i));
-        }
-
-        // Prompt user to select development languages
-        printf("   [ configuring ] select languages > \n");
-        int language;
-        while (scanf("%d", &language) == 1) {
-            if (language >= 1 && language <= NumLanguages) {
-                selectedLanguages[language - 1] = 1;
-            } else {
-                printf("   [ configuring ] invalid input. please enter a valid language number.\n");
-            }
-        }
+        scanf("%s", windows_version);
 
         // Create a cJSON object and add user input
         cJSON *root = cJSON_CreateObject();
         cJSON_AddStringToObject(root, "windows-v", windows_version);
 
-        cJSON *languagesArray = cJSON_CreateArray();
-        for (int i = 0; i < NumLanguages; ++i) {
-            if (selectedLanguages[i]) {
-                cJSON_AddItemToArray(languagesArray, cJSON_CreateString(language_to_string(i)));
-            }
-        }
-
-        cJSON_AddItemToObject(root, "dev-langs", languagesArray);
 
         // Write cJSON object to the JSON file
         FILE *filePtr = fopen(config_file, "w");
@@ -107,23 +73,48 @@ void handle_configuration() {
     } else {
         //printf("   [ configuring ] %s already exists.\n", config_file);
     }
-}
 
-// Function to convert language enum to string
-const char *language_to_string(int language) {
-    switch (language) {
-        case C:
-            return "C";
-        case CPlusPlus:
-            return "C++";
-        case Java:
-            return "Java";
-        case Python:
-            return "Python";
-        case JavaScript:
-            return "JavaScript";
-        // Add more languages as needed
-        default:
-            return "Unknown";
+    if (!check_file_existence(cargo_db)) {
+
+        printf("   [ configuring ] database not found. creating %s...\n", cargo_db);
+
+        sqlite3 *db;
+        char *errMsg = 0;
+        int rc;
+
+        // Open the database
+        rc = sqlite3_open("cargo.db", &db);
+        if (rc) {
+            fprintf(stderr, "   [ configuring ] cannot open database.\n", sqlite3_errmsg(db));
+            sqlite3_close(db);
+        } else {
+            fprintf(stdout, "   [ configuring ] database opened successfully\n");
+        }
+
+        const char *sql = "CREATE TABLE IF NOT EXISTS clipboard_container ("
+                            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                            "title TEXT,"
+                            "type TEXT,"
+                            "source TEXT,"
+                            "content TEXT,"
+                            "urls TEXT," 
+                            "emails TEXT,"
+                            "num_urls INTEGER,"
+                            "num_emails INTEGER,"
+                            "date_time TEXT NOT NULL,"
+                            "owner_class TEXT"
+        ");";
+
+        rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
+        if (rc != SQLITE_OK) {
+            fprintf(stderr, "   [ configuring ] sql error\n\n", errMsg);
+            sqlite3_free(errMsg);
+        } else {
+            fprintf(stdout, "   [ configuring ] table created successfully\n");
+        }
+
+        // Close the database
+        sqlite3_close(db);
+
     }
 }

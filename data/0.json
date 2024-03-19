@@ -1,9 +1,0 @@
-{
-	"title":	"{\r",
-	"type":	"",
-	"source":	"",
-	"date-time":	"Mon Feb 26 21:48:46 2024\n",
-	"content":	"{\r\n  \"name\": \"Catppuccin Macchiato\",\r\n  \"tab\": {\r\n    \"background\": \"#24273AFF\",\r\n    \"showCloseButton\": \"always\",\r\n    \"unfocusedBackground\": null\r\n  },\r\n  \"tabRow\": {\r\n    \"background\": \"#1E2030FF\",\r\n    \"unfocusedBackground\": \"#181926FF\"\r\n  },\r\n  \"window\": {\r\n    \"applicationTheme\": \"dark\"\r\n  }\r\n}",
-	"urls":	[],
-	"emails":	[]
-}

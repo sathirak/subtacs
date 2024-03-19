@@ -22,11 +22,11 @@ void output_container_in()
 {
     remove_escape_chars(container_in.title);
 
-    printf("\n\033[1;36m  %d > %-30.30s... \033[0m",container_in.id,container_in.title);
+    printf("\n\033[1;36m   > %-30.30s... \033[0m",container_in.title);
 
     printf("\n");
 
-    convert_to_json(&container_in);
+    insert_to_db(&container_in);
     reset_container();
 }
 

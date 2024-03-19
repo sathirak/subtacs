@@ -2,87 +2,80 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <dirent.h>
-#include <sys/stat.h>
 #include "../lib/cJSON.h"
+#include "../lib/sqlite/sqlite3.h"
 
 #include "../main.h"
 
-int get_filenumber(const char* folder_path) {
-    DIR *dir;
-    struct dirent *entry;
-    int file_count = 0;
+// this function lets you insert the cargo to the database
+void insert_to_db(struct clipboard_container *cargo) {
 
-    // Open the directory
-    dir = opendir(folder_path);
-    if (dir == NULL) {
-        perror("[ error ] unable to open directory \n");
-        return -1; // Return -1 to indicate an error
-    }
+    // prepare 2 JSON arrays to put the found urls and emails
 
-    // Count the files in the directory
-    while ((entry = readdir(dir)) != NULL) {
-        // Check if the entry is a regular file
-        struct stat statbuf;
-        char full_path[FILE_PATH_MAX];
-        snprintf(full_path, sizeof(full_path), "%s/%s", folder_path, entry->d_name);
-        if (stat(full_path, &statbuf) == 0 && S_ISREG(statbuf.st_mode)) {
-            file_count++;
-        }
-    }
-
-    // Close the directory
-    closedir(dir);
-
-    return file_count;
-}
-
-void convert_to_json(struct clipboard_container *cargo) {
-
-    cJSON *root = cJSON_CreateObject();
-    
-    cJSON_AddNumberToObject(root, "id", cargo->id);
-    cJSON_AddStringToObject(root, "title", cargo->title);
-    cJSON_AddStringToObject(root, "type", cargo->type);
-    cJSON_AddStringToObject(root, "source", cargo->source);
-    cJSON_AddStringToObject(root, "date-time", cargo->date_time);
-    cJSON_AddStringToObject(root, "content", cargo->content);
-    cJSON_AddStringToObject(root, "owner-class", cargo->owner_class);
-
-    cJSON *urlsArray = cJSON_AddArrayToObject(root, "urls");
+    cJSON *urls_arr = cJSON_CreateArray();
     for (int i = 0; i < cargo->num_urls; ++i) {
-        cJSON_AddItemToArray(urlsArray, cJSON_CreateString(cargo->urls[i]));
+        cJSON_AddItemToArray(urls_arr, cJSON_CreateString(cargo->urls[i]));
     }
 
-    cJSON *emailsArray = cJSON_AddArrayToObject(root, "emails");
+    cJSON *email_arr = cJSON_CreateArray();
     for (int i = 0; i < cargo->num_emails; ++i) {
-        cJSON_AddItemToArray(emailsArray, cJSON_CreateString(cargo->emails[i]));
+        cJSON_AddItemToArray(email_arr, cJSON_CreateString(cargo->emails[i]));
     }
 
-    char *jsonString = cJSON_Print(root);
+    // add the two jsons into two strings
+    char *url_json = cJSON_Print(urls_arr);
+    char *email_json = cJSON_Print(email_arr);
 
-    char filename[FILE_PATH_MAX];
+    // now initialise the db and open it
+    sqlite3 *db;
+    char *errMsg = 0;
+    int rc;
 
-    int file_count = get_filenumber("./data");
+    // open the cargo database, error if cannot open the db
+    rc = sqlite3_open("cargo.db", &db);
+    if (rc) {
+        fprintf(stderr, "   [ configuring ] cannot open database: %s\n", sqlite3_errmsg(db));
+        sqlite3_close(db);
 
-    if (file_count == -1) {
-        fprintf(stderr, "[ error ] error calculating filename.\n");
-        cJSON_Delete(root);
-        free(jsonString);
-        return;
     }
 
-    sprintf(filename, "./data/%d.json", file_count);
+    sqlite3_stmt *stmt;
 
-    FILE *file = fopen(filename, "w");
-    if (file != NULL) {
-        fprintf(file, "%s\n", jsonString);
-        fclose(file);
-    } else {
-        fprintf(stderr, "[ error ] error opening %s for writing.\n", filename);
+    // insert query to into the table
+    const char *sql = "INSERT INTO clipboard_container (title, type, source, content, urls, emails, num_urls, num_emails, date_time, owner_class) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+    // prepare a statement for the insert query
+    rc = sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "   [ configuring ] failed to prepare statement: %s\n", sqlite3_errmsg(db));
+
     }
 
-    cJSON_Delete(root);
-    free(jsonString);
+    sqlite3_bind_text(stmt, 1, cargo->title, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 2, cargo->type, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 3, cargo->source, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 4, cargo->content, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 5, url_json, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_text(stmt, 6, email_json, -1, SQLITE_TRANSIENT);
+    sqlite3_bind_int(stmt, 7, cargo->num_urls);
+    sqlite3_bind_int(stmt, 8, cargo->num_emails);
+    sqlite3_bind_text(stmt, 9, cargo->date_time, -1, SQLITE_STATIC);
+    sqlite3_bind_text(stmt, 10, cargo->owner_class, -1, SQLITE_STATIC);
+
+    // execute prepared statement
+    rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        fprintf(stderr, "   [ configuring ] failed to execute statement: %s\n", sqlite3_errmsg(db));
+
+    }
+
+    // free the JSON and other strings
+    cJSON_Delete(urls_arr);
+    cJSON_Delete(email_arr);
+    free(url_json);
+    free(email_json);
+
+    sqlite3_finalize(stmt);
+    sqlite3_close(db);
+
 }
