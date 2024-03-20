@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../lib/cJSON.h"
+#include "../lib/cJSON/cJSON.h"
 #include "../lib/sqlite/sqlite3.h"
 
 #include "../main.h"

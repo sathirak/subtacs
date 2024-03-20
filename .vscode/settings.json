@@ -11,6 +11,7 @@
         "cjson.h": "c",
         "*.rh": "c",
         "stat.h": "c",
-        "string": "c"
+        "string": "c",
+        "sqlite3.h": "c"
     }
 }
